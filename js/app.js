@@ -39,11 +39,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
             const adminDepoBtn = document.getElementById('btn-depo-kontrol');
             const adminUserSelector = document.getElementById('admin-user-selector');
             const uploadBtn = document.getElementById('btn-upload-file');
+            const navNoteTool = document.getElementById('nav-note-tool');
+            const navStatTool = document.getElementById('nav-stat-tool');
+            const navSimTool = document.getElementById('nav-sim-tool');
             
             if (user) {
                 btn.innerText = "Çıkış Yap";
                 btn.onclick = window.handleLogout;
                 btn.style.background = "#ef4444";
+                if(navNoteTool) navNoteTool.style.display = "block";
                 
                 // Admin kontrolü
                 get(ref(database, 'Admins/' + user.uid)).then((snapshot) => {
@@ -51,18 +55,27 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                         window.isAdmin = true;
                         info.innerText = `Admin: ${user.email}`;
                         info.style.color = "#a78bfa";
-                        adminDepoBtn.style.display = "block";
-                        adminUserSelector.style.display = "flex";
-                        uploadBtn.style.display = "block"; // Admin de dosya yükleyebilir
+                        if(adminDepoBtn) adminDepoBtn.style.display = "block";
+                        if(adminUserSelector) adminUserSelector.style.display = "flex";
+                        if(uploadBtn) uploadBtn.style.display = "block"; // Admin de dosya yükleyebilir
+                        if(navStatTool) navStatTool.style.display = "block";
+                        if(navSimTool) navSimTool.style.display = "block";
                         window.loadUserListForAdmin();
                         window.loadDepoFiles();
                     } else {
                         window.isAdmin = false;
                         info.innerText = `Kaptan: ${user.email}`;
                         info.style.color = "#10b981";
-                        adminDepoBtn.style.display = "none";
-                        adminUserSelector.style.display = "none";
-                        uploadBtn.style.display = "block";
+                        if(adminDepoBtn) adminDepoBtn.style.display = "none";
+                        if(adminUserSelector) adminUserSelector.style.display = "none";
+                        if(uploadBtn) uploadBtn.style.display = "block";
+                        if(navStatTool) navStatTool.style.display = "none";
+                        if(navSimTool) navSimTool.style.display = "none";
+                        
+                        const activeTool = document.querySelector('.tool-section.active');
+                        if (activeTool && (activeTool.id === 'stat-tool' || activeTool.id === 'sim-tool' || activeTool.id === 'depo-tool')) {
+                            if (window.openTool) window.openTool('item-tool');
+                        }
                     }
                     window.updateUIPermissions();
                     window.loadSelectedUserNote(); // Kendi notlarını yükle
@@ -74,10 +87,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                 btn.style.background = "#3b82f6";
                 info.innerText = "Misafir (Okuma Modu)";
                 info.style.color = "#94a3b8";
-                adminDepoBtn.style.display = "none";
-                adminUserSelector.style.display = "none";
-                uploadBtn.style.display = "none";
+                if(adminDepoBtn) adminDepoBtn.style.display = "none";
+                if(adminUserSelector) adminUserSelector.style.display = "none";
+                if(uploadBtn) uploadBtn.style.display = "none";
+                if(navNoteTool) navNoteTool.style.display = "none";
+                if(navStatTool) navStatTool.style.display = "none";
+                if(navSimTool) navSimTool.style.display = "none";
                 window.updateUIPermissions();
+                
+                const activeTool = document.querySelector('.tool-section.active');
+                if (activeTool && (activeTool.id === 'note-tool' || activeTool.id === 'stat-tool' || activeTool.id === 'sim-tool' || activeTool.id === 'depo-tool')) {
+                    if (window.openTool) window.openTool('item-tool');
+                }
             }
         });
 
@@ -285,6 +306,19 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
         // AFK & DURUM
         window.lastEditTime = Date.now(); window.lastEditText = "Sistem Başlatıldı.";
         window.registerAction = function(actionText) { window.lastEditTime = Date.now(); window.lastEditText = actionText; const afkEl = document.getElementById('afk-reminder'); if (afkEl) afkEl.style.display = 'none'; };
+        
+        let throttleTimer;
+        function resetAfkTimer() {
+            if (throttleTimer) return;
+            throttleTimer = setTimeout(() => { throttleTimer = null; }, 1000);
+            window.lastEditTime = Date.now();
+            const afkEl = document.getElementById('afk-reminder');
+            if (afkEl && afkEl.style.display === 'block') afkEl.style.display = 'none';
+        }
+        window.addEventListener('mousemove', resetAfkTimer);
+        window.addEventListener('keydown', resetAfkTimer);
+        window.addEventListener('click', resetAfkTimer);
+
         setInterval(() => { const now = Date.now(); if (now - window.lastEditTime > 10 * 60 * 1000) { const afkEl = document.getElementById('afk-reminder'); if (afkEl && afkEl.style.display !== 'block') { afkEl.innerHTML = `⏳ <b>Kaptan Köşkü Uyarısı</b><br><br>10 dakikadır işlem yapılmadı.<br><span style="color:#fbc531; font-size:11px;">Son İşlem: ${window.lastEditText}</span>`; afkEl.style.display = 'block'; } } }, 60000); 
         onValue(ref(database, ".info/connected"), (snap) => { const statusDot = document.getElementById("status-indicator"); const statusText = document.getElementById("status-text"); if (snap.val() === true) { statusDot.classList.add("online"); statusText.innerText = "Firebase'e Bağlı (Canlı)"; statusText.style.color = "#10b981"; } else { statusDot.classList.remove("online"); statusText.innerText = "Çevrimdışı"; statusText.style.color = "#ef4444"; } });
 

@@ -12,12 +12,12 @@
             <h2>🚀 Uzay Çöplüğü</h2>
             <p>Kaptan'ın Merkezi V7.1</p>
         </div>
-        <button class="nav-btn active" onclick="openTool('stat-tool')">📊 Gemi Simülatörü</button>
-        <button class="nav-btn" onclick="openTool('item-tool')">💎 Item Ayarları (Canlı)</button>
-        <button class="nav-btn" onclick="openTool('tech-tool')">🧬 Harita & Yetenek</button>
-        <button class="nav-btn" onclick="openTool('denge-tool')" style="color: #fbc531;">⚖️ Denge Merkezi</button>
-        <button class="nav-btn" onclick="openTool('sim-tool')" style="color: #ff9f43;">🎲 Tur (Run) Simülatörü</button>
-        <button class="nav-btn" onclick="openTool('note-tool')" style="color: #10b981;">📝 Kaptanın Jurnali</button>
+        <button class="nav-btn" id="nav-stat-tool" onclick="openTool('stat-tool')" style="display: none;">📊 Gemi Simülatörü</button>
+        <button class="nav-btn active" id="nav-item-tool" onclick="openTool('item-tool')">💎 Item Ayarları (Canlı)</button>
+        <button class="nav-btn" id="nav-tech-tool" onclick="openTool('tech-tool')">🧬 Harita & Yetenek</button>
+        <button class="nav-btn" id="nav-denge-tool" onclick="openTool('denge-tool')" style="color: #fbc531;">⚖️ Denge Merkezi</button>
+        <button class="nav-btn" id="nav-sim-tool" onclick="openTool('sim-tool')" style="color: #ff9f43; display: none;">🎲 Tur (Run) Simülatörü</button>
+        <button class="nav-btn" id="nav-note-tool" onclick="openTool('note-tool')" style="color: #10b981; display: none;">📝 Kaptanın Jurnali</button>
         <button class="nav-btn" id="btn-depo-kontrol" onclick="openTool('depo-tool')" style="color: #a78bfa; display: none;">📁 Depo Kontrol</button>
         
         <div style="margin-top: auto; padding: 15px; border-top: 1px solid #334155;">
@@ -48,13 +48,13 @@
 
     <div id="main-container">
         
-        <div id="stat-tool" class="tool-section active">
+        <div id="stat-tool" class="tool-section">
             <h1 style="color: #38bdf8; margin-top:0;">🚀 Usta Mühendis Denge Simülatörü</h1>
             <p style="color: #94a3b8; margin-top:0; margin-bottom: 20px;">Her stat için aynı aileyi etkileyen tüm yetenekler bir arada + Görsel Vakum Simülatörü!</p>
             <div id="stat-app-container"></div>
         </div>
 
-        <div id="item-tool" class="tool-section">
+        <div id="item-tool" class="tool-section active">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h1 style="color: #10b981; margin:0;">💎 Item Ayarları Merkezi</h1>
                 <div>
