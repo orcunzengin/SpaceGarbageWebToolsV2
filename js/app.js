@@ -14,8 +14,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
 
         // AUTHENTICATION LOGIC
         window.handleLogin = function() {
-            const email = document.getElementById('auth-email').value;
+            const username = document.getElementById('auth-username').value;
             const password = document.getElementById('auth-password').value;
+            const email = `${username}@spacegarbage.local`; // Kullanıcı adını Firebase'in anlayacağı e-posta formatına çeviriyoruz.
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     window.toggleLoginModal();
@@ -49,11 +50,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                 btn.style.background = "#ef4444";
                 if(navNoteTool) navNoteTool.style.display = "block";
                 
+                const username = user.email.split('@')[0]; // E-postadan kullanıcı adını ayıkla
                 // Admin kontrolü
                 get(ref(database, 'Admins/' + user.uid)).then((snapshot) => {
                     if (snapshot.exists() && snapshot.val() === true) {
                         window.isAdmin = true;
-                        info.innerText = `Admin: ${user.email}`;
+                        info.innerText = `Admin: ${username}`;
                         info.style.color = "#a78bfa";
                         if(adminDepoBtn) adminDepoBtn.style.display = "block";
                         if(adminUserSelector) adminUserSelector.style.display = "flex";
@@ -64,7 +66,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                         window.loadDepoFiles();
                     } else {
                         window.isAdmin = false;
-                        info.innerText = `Kaptan: ${user.email}`;
+                        info.innerText = `Kaptan: ${username}`;
                         info.style.color = "#10b981";
                         if(adminDepoBtn) adminDepoBtn.style.display = "none";
                         if(adminUserSelector) adminUserSelector.style.display = "none";
@@ -104,7 +106,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
 
         window.updateUIPermissions = function() {
             // Sadece Admin düzenleme yapabilir
-            const inputs = document.querySelectorAll('input:not(#auth-email):not(#auth-password), select, button.btn-top, button.action-btn, button[onclick*="addNew"]');
+            const inputs = document.querySelectorAll('input:not(#auth-username):not(#auth-password), select, button.btn-top, button.action-btn, button[onclick*="addNew"]');
             inputs.forEach(el => {
                 if(el.id === 'user-file-upload' || el.id === 'user-notes-dropdown') return; // Bunları kapatma
                 if(!window.isAdmin && el.closest('.tool-section') && el.closest('.tool-section').id !== 'note-tool' && el.closest('.tool-section').id !== 'sim-tool' && el.closest('.tool-section').id !== 'stat-tool') {
@@ -263,9 +265,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                 files.forEach(f => {
                     const dateStr = new Date(f.timestamp).toLocaleString();
                     const sizeStr = (f.size / 1024).toFixed(2) + " KB";
+                    const username = f.email ? f.email.split('@')[0] : 'Bilinmiyor';
                     listEl.innerHTML += `
                         <tr style="border-bottom: 1px solid #334155;">
-                            <td style="padding: 10px; color: #38bdf8;">${f.email}</td>
+                            <td style="padding: 10px; color: #38bdf8;">${username}</td>
                             <td style="padding: 10px;">${f.fileName} <br><span style="font-size:10px; color:#94a3b8;">${sizeStr}</span></td>
                             <td style="padding: 10px; color: #94a3b8; font-size: 12px;">${dateStr}</td>
                             <td style="padding: 10px;">
