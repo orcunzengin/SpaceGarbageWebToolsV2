@@ -34,11 +34,11 @@
             <h3 style="margin-top: 0; color: #38bdf8;">Kaptan Girişi</h3>
             <div style="margin-bottom: 15px;">
                 <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px;">E-Posta</label>
-                <input type="email" id="auth-email" style="width: 100%; background: #0f172a; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; box-sizing: border-box;">
+                <input type="email" id="auth-email" style="width: 100%; background: #0f172a; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; box-sizing: border-box;" onkeydown="if(event.key === 'Enter') document.getElementById('auth-password').focus()">
             </div>
             <div style="margin-bottom: 20px;">
                 <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px;">Şifre</label>
-                <input type="password" id="auth-password" style="width: 100%; background: #0f172a; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; box-sizing: border-box;">
+                <input type="password" id="auth-password" style="width: 100%; background: #0f172a; border: 1px solid #475569; color: white; padding: 8px; border-radius: 4px; box-sizing: border-box;" onkeydown="if(event.key === 'Enter') window.handleLogin()">
             </div>
             <button onclick="window.handleLogin()" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">Giriş Yap</button>
             <button onclick="window.toggleLoginModal()" style="width: 100%; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">İptal</button>
