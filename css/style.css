@@ -1,0 +1,179 @@
+/* GENEL TEMA */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #e2e8f0; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* SOL MENÜ (NAVİGASYON) */
+        #sidebar-menu { width: 250px; background-color: #1e293b; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.8); z-index: 20; border-right: 2px solid #334155; transition: margin-left 0.3s ease; }
+        #sidebar-menu.collapsed { margin-left: -250px; }
+        .logo-area { padding: 20px; text-align: center; border-bottom: 2px solid #334155; background: #0f172a; }
+        .logo-area h2 { margin: 0; color: #38bdf8; font-size: 18px; }
+        .logo-area p { margin: 5px 0 0 0; font-size: 11px; color: #10b981; font-weight: bold; }
+        
+        .nav-btn { background: transparent; color: #94a3b8; border: none; padding: 15px 20px; text-align: left; cursor: pointer; font-size: 15px; font-weight: bold; border-left: 4px solid transparent; transition: 0.2s; border-bottom: 1px solid #334155; }
+        .nav-btn:hover { background: #334155; color: white; }
+        .nav-btn.active { background: #0f172a; color: #38bdf8; border-left: 4px solid #38bdf8; }
+
+        /* MENÜ AÇ/KAPAT TUŞU */
+        .sidebar-toggle { position: absolute; top: 50%; left: 250px; transform: translateY(-50%); background: #1e293b; color: #38bdf8; border: 1px solid #334155; border-left: none; border-radius: 0 8px 8px 0; padding: 25px 6px; cursor: pointer; z-index: 1000; transition: left 0.3s ease, background 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px; outline: none; }
+        .sidebar-toggle:hover { background: #334155; color: white; }
+        #sidebar-menu.collapsed ~ .sidebar-toggle { left: 0; }
+
+        /* ANA İÇERİK ALANI */
+        #main-container { flex: 1; position: relative; overflow-y: auto; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 30px 30px; }
+        
+        /* ARAÇ KONTEYNERLERİ */
+        .tool-section { display: none; padding: 20px; height: 100%; box-sizing: border-box; }
+        .tool-section.active { display: block; }
+        
+        /* FIREBASE DURUM GÖSTERGESİ & AFK HATIRLATICI */
+        #db-status { position: absolute; bottom: 10px; right: 10px; background: #1e293b; padding: 5px 15px; border-radius: 20px; font-size: 12px; border: 1px solid #334155; display: flex; align-items: center; gap: 8px; z-index: 50; }
+        .status-dot { width: 10px; height: 10px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
+        .status-dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+
+        @keyframes slideUpFade { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #afk-reminder { position: absolute; bottom: 20px; left: 30px; background: rgba(15, 23, 42, 0.95); border: 1px solid #fbc531; border-left: 4px solid #fbc531; padding: 15px 20px; border-radius: 8px; color: #fbd38d; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: none; backdrop-filter: blur(5px); font-size: 13px; animation: slideUpFade 0.5s ease-out; max-width: 300px; line-height: 1.5; }
+
+		/* ITEM TOOLS ÖZEL TASARIMLARI */
+        .tabs { display: flex; background: #0f172a; border-bottom: 2px solid #334155; margin-bottom: 20px;}
+        .tab-btn { background: #1e293b; color: #94a3b8; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: 0.2s; border-bottom: 3px solid transparent; border-radius: 8px 8px 0 0; margin-right: 5px; }
+        .tab-btn:hover { background: #334155; color: white; }
+        .tab-btn.active-tab { color: #10b981; border-bottom: 3px solid #10b981; background: #1e293b; }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+        .item-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.2s;}
+        .item-card:hover { border-color: #475569;}
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #334155; }
+        .type-Trash { border-top: 4px solid #94a3b8; } .type-Loot { border-top: 4px solid #ef4444; } .type-Craftable { border-top: 4px solid #10b981; }
+        @keyframes card-highlight {
+            0% { box-shadow: 0 0 0px rgba(251, 197, 49, 0); }
+            50% { box-shadow: 0 0 25px rgba(251, 197, 49, 0.7); }
+            100% { box-shadow: 0 0 0px rgba(251, 197, 49, 0); }
+        }
+        .item-card.highlighted { animation: card-highlight 1.5s ease-out; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .col { flex: 1; }
+        .item-card input, .item-card select { background: #1e293b; border: 1px solid #475569; color: white; padding: 6px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 12px;}
+        .item-card label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px; font-weight: bold;}
+        .btn-top { border: none; padding: 8px 15px; cursor: pointer; border-radius: 6px; font-weight: bold; color: white; margin-left:10px;}
+        .add-new-card { border: 2px dashed #334155; background: transparent; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; min-height: 150px; color: #94a3b8; }
+        .add-new-card:hover { border-color: #10b981; color: #10b981; }
+		
+		/* TECH TREE ÖZEL TASARIMLARI */
+        .tech-layout { display: flex; height: calc(100vh - 100px); border-top: 1px solid #334155; margin-top: 15px;}
+        .tech-sidebar { width: 380px; background-color: #1e293b; display: flex; flex-direction: column; border-right: 2px solid #334155; overflow-y: auto;}
+        .tech-canvas-area { flex: 1; position: relative; overflow: hidden; cursor: default; background-color: #0f172a;}
+        .tech-canvas-area:active { cursor: grabbing; }
+		#tech-canvas { position: absolute; top: 0; left: 0; }
+        .tech-tabs { display: flex; background: #0f172a; border-bottom: 2px solid #334155; }
+        .tech-tab-btn { flex: 1; background: #1e293b; color: #94a3b8; border: none; padding: 12px 5px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tech-tab-btn.active { color: #f59e0b; border-bottom: 3px solid #f59e0b; background: #0f172a; }
+        .tech-tab-content { display: none; padding: 15px; }
+        .tech-tab-content.active { display: block; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 3px; font-weight: bold;}
+        .form-group input, .form-group select { width: 100%; background: #0f172a; border: 1px solid #334155; color: white; padding: 6px; border-radius: 4px; box-sizing: border-box; }
+        .flex-row { display: flex; gap: 10px; }
+        .level-box { background: #0f172a; border: 1px solid #f59e0b; border-radius: 5px; padding: 10px; margin-top: 10px; }
+        .level-box h4 { margin: 0 0 10px 0; color: #f59e0b; font-size: 14px; border-bottom: 1px solid #f59e0b; padding-bottom: 5px; }
+        .list-item { background: #0f172a; border: 1px solid #334155; padding: 10px; margin-bottom: 5px; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .list-item:hover { background: #1e293b; border-color: #f59e0b; }
+        .action-btn { background: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 5px; }
+        .action-btn:hover { opacity: 0.8; }
+        
+        /* BAĞLANTI MODU KONTROL PANELİ */
+        #connect-ui-panel { position:absolute; top:20px; right:20px; z-index:10; display:none; background:rgba(30, 41, 59, 0.95); padding:15px; border-radius:8px; border:1px solid #3b82f6; box-shadow: 0 4px 15px rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        .connect-btn { background:#334155; color:white; border:1px solid #475569; padding:8px 12px; border-radius:4px; cursor:pointer; font-weight:bold; margin-right:5px; transition:0.2s; }
+        .connect-btn:hover { background:#475569; }
+        .connect-btn.active-link { background:#3b82f6; border-color:#60a5fa; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        .cancel-link-btn { background:#ef4444; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-weight:bold; transition:0.2s; }
+        .cancel-link-btn:hover { background:#dc2626; }
+		
+		/* STAT HESAPLAYICI ÖZEL TASARIMLARI */
+        .stat-category { background: #1e293b; margin-bottom: 30px; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #334155; }
+        .stat-category h2 { color: #f59e0b; border-bottom: 2px solid #475569; padding-bottom: 10px; margin-top: 0; }
+        .stat-card-box { background: #0f172a; margin-top: 20px; padding: 15px; border-radius: 8px; border-left: 4px solid #38bdf8; }
+        .stat-card-box h3 { margin-top: 0; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; font-size: 16px;}
+        .stat-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .stat-table th, .stat-table td { border: 1px solid #334155; padding: 8px; text-align: center; }
+        .stat-table th { background: #1e293b; color: #94a3b8; font-size: 13px; }
+        .stat-table td:first-child { text-align: left; font-weight: bold; color: #cbd5e1; width: 35%; }
+        .stat-table input[type="number"] { width: 60px; background: #0f172a; border: 1px solid #475569; color: #38bdf8; padding: 6px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 13px;}
+        .stat-table input[type="number"]:focus { outline: none; border-color: #38bdf8; }
+        .base-input { width: 60px; margin-left: 10px; background: #1e293b !important; border: 1px solid #f59e0b !important; color: #f59e0b !important; }
+        .total-row { background: #1e293b; font-size: 14px; color: #10b981; }
+        .total-row td { padding: 12px; }
+        .grand-total-text { font-weight: bold; font-size: 20px; color: #10b981; }
+        .visualizer-box { background: #000; border: 1px dashed #38bdf8; border-radius: 8px; margin-top: 15px; padding: 10px; text-align: center; }
+        .visualizer-box h4 { margin: 0 0 10px 0; color: #f59e0b; }
+        #vacuumCanvas { background: #0f172a; border-radius: 4px; max-width: 100%; }
+
+        /* DENGE MERKEZİ (DM) KOKPİT SİSTEMİ */
+        .dm-dashboard { position: relative; width: 100%; height: calc(100vh - 120px); margin-top: 15px; }
+        .dm-column { position: absolute; background: #1e293b; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; border: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: border-color 0.2s; min-width: 250px; min-height: 250px; overflow: hidden; }
+        .dm-column.unpinned { border-color: #fbc531; resize: both; z-index: 100; box-shadow: 0 0 20px rgba(251, 197, 49, 0.15); overflow: auto; }
+        .dm-column.unpinned::-webkit-resizer { background-color: transparent; background-image: linear-gradient(135deg, transparent 50%, #fbc531 50%); }
+        .dm-drag-handle { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 10px; }
+        .dm-column.unpinned .dm-drag-handle { cursor: move; background: rgba(251, 197, 49, 0.05); border-radius: 4px; }
+        .dm-pin-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 2px 5px; transition: 0.2s; }
+        .dm-pin-btn:hover { transform: scale(1.1); }
+        
+        #dm-colItems { left: 0; top: 0; width: 32%; height: calc(100% - 10px); }
+        #dm-colSkills { left: 33.5%; top: 0; width: 30%; height: calc(100% - 10px); }
+        #dm-editorCol { left: 65%; top: 0; width: 35%; height: calc(100% - 10px); }
+
+        .dm-scrollable-list { flex: 1; overflow-y: auto; padding-right: 5px; margin-bottom: 10px; }
+        .dm-card { background: #0f172a; margin-bottom: 8px; padding: 10px; border-radius: 5px; cursor: pointer; border-left: 4px solid transparent; border: 1px solid #334155; transition: 0.2s; display:flex; align-items:center; gap:10px; }
+        .dm-card:hover { border-color: #fbc531; box-shadow: 0 0 8px rgba(251, 197, 49, 0.2); }
+        .dm-rarity-tag { font-size: 0.75rem; opacity: 0.8; margin-left: 5px; border-radius: 3px; padding: 1px 4px; background: rgba(0,0,0,0.3); }
+        .dm-details { background: #0f172a; border: 1px solid #334155; border-radius: 5px; margin-bottom: 10px; }
+        .dm-summary { padding: 10px; cursor: pointer; font-weight: bold; outline: none; user-select: none; color: #38bdf8; }
+        .dm-summary:hover { background: #1e293b; }
+        .dm-details-content { padding: 10px; border-top: 1px solid #334155; background: #1e293b; }
+        .dm-log-panel { background: #0f172a; color: #e2e8f0; padding: 15px; border-radius: 5px; flex: 1; overflow-y: auto; font-size: 0.9rem; line-height: 1.4; border: 1px solid #334155; }
+        .dm-tree-item { margin-bottom: 4px; font-size: 13px; display:flex; align-items:center;}
+        .dm-tree-indent { margin-left: 20px; border-left: 1px dashed #475569; padding-left: 10px; margin-top: 2px; }
+
+        /* NOT DEFTERİ (KAPTANIN JURNALİ) - V2 */
+        .note-container { display: flex; flex-direction: column; height: calc(100vh - 120px); background: #1e293b; border-radius: 8px; border: 1px solid #334155; margin-top: 15px; }
+        .note-toolbar { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 15px; background: #0f172a; border-bottom: 1px solid #334155; border-radius: 8px 8px 0 0; align-items: center; }
+        .note-toolbar button { background: #334155; color: #e2e8f0; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .note-toolbar button:hover { background: #475569; }
+        .note-toolbar input[type="color"] { background: transparent; border: 1px solid #475569; cursor: pointer; height: 26px; width: 30px; padding: 0; border-radius: 4px; }
+        #note-editor { flex: 1; padding: 20px; overflow-y: auto; outline: none; font-size: 15px; line-height: 1.6; color: #e2e8f0; background: #0f172a; }
+        #note-editor > div { position: relative; } /* Wrapper için */
+        #note-editor:empty:before { content: attr(placeholder); color: #64748b; font-style: italic; }
+        #note-save-status { margin-left: auto; font-size: 12px; color: #94a3b8; }
+        .note-block-wrapper { position: relative; margin-bottom: 8px; }
+        .block-delete-btn { position: absolute; top: 5px; right: 5px; background: #475569; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: none; align-items: center; justify-content: center; font-size: 12px; z-index: 10; }
+        .note-block-wrapper:hover .block-delete-btn { display: flex; }
+        .task-row { display: flex; align-items: flex-start; gap: 10px; background: #1e293b; padding: 10px; border-radius: 6px; border-left: 3px solid #10b981; }
+        .task-row input[type="checkbox"] { margin-top: 4px; width: 18px; height: 18px; cursor: pointer; accent-color: #10b981; }
+        .task-row .task-text { flex: 1; outline: none; transition: 0.3s; }
+        .task-row input[type="checkbox"]:checked + .task-text { text-decoration: line-through; opacity: 0.5; color: #94a3b8; }
+        .note-toggle { background: #1e293b; border: 1px solid #334155; border-radius: 6px; }
+        .note-toggle summary { padding: 10px; cursor: pointer; font-weight: bold; color: #38bdf8; outline: none; user-select: none;}
+        .note-toggle summary::marker { color: #38bdf8; }
+        .note-toggle .toggle-content { padding: 0 15px 15px 35px; border-top: 1px solid #334155; }
+        .note-code-block { background: #011627; border: 1px solid #475569; border-radius: 6px; }
+        .note-code-block summary { padding: 0; list-style: none; }
+        .note-code-block summary::-webkit-details-marker { display: none; }
+        .code-header { display: flex; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 6px 6px 0 0; cursor: pointer; }
+        .code-title { flex: 1; color: #82aaff; font-weight: bold; font-size: 13px; outline: none; }
+        .code-lang { background: #f78c6c; color: #011627; font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin: 0 10px; }
+        .code-copy-btn { background: #334155; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .note-code-block pre { margin: 0; }
+        .note-code-block code { display: block; color: #d6deeb; font-family: 'Fira Code', 'Courier New', monospace; padding: 15px; white-space: pre-wrap; word-wrap: break-word; font-size: 14px; outline: none; }
+        .token-comment { color: #637777; font-style: italic; } .token-keyword { color: #c792ea; } .token-string { color: #c3e88d; } .token-number { color: #f78c6c; } .token-function { color: #82aaff; } .token-operator { color: #89ddff; }
+        a.note-link { color: #fbc531; text-decoration: none; background: rgba(251, 197, 49, 0.1); padding: 2px 4px; border-radius: 4px; border-bottom: 1px dashed #fbc531; font-weight: bold; cursor: pointer; }
+        a.note-link:hover { background: rgba(251, 197, 49, 0.2); }
+
+        /* SİMÜLATÖR EKRANI CSS (TUR BAZLI) */
+        .sim-container { display: flex; gap: 20px; height: calc(100vh - 100px); margin-top: 15px; }
+        .sim-control-panel { width: 320px; background: #1e293b; border-radius: 8px; padding: 15px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;}
+        .sim-results-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
+        .sim-box { background: #1e293b; border-radius: 8px; padding: 15px; border: 1px solid #334155; }
+        .sim-btn { background: #ff9f43; color: #0f172a; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.2s; text-align: center; }
+        .sim-btn:hover { background: #ffb142; transform: scale(1.02); }
+        .sim-insight-card { background: #0f172a; border-left: 4px solid; padding: 12px; margin-bottom: 10px; border-radius: 4px; }
+        .sim-insight-card h4 { margin: 0 0 5px 0; font-size: 14px; }
+        .sim-insight-card p { margin: 0; font-size: 13px; color: #cbd5e1; }
+        .insight-danger { border-color: #ef4444; } .insight-warning { border-color: #fbc531; } .insight-info { border-color: #3b82f6; } .insight-success { border-color: #10b981; }
+        .sim-timeline { font-family: monospace; font-size: 13px; background: #000; color: #10b981; padding: 15px; border-radius: 6px; flex:1; overflow-y: auto; border: 1px solid #334155; }
