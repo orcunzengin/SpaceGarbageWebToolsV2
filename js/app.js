@@ -64,6 +64,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                         if(navSimTool) navSimTool.style.display = "block";
                         window.loadUserListForAdmin();
                         window.loadDepoFiles();
+                        // GamePlanner: sadece admin görebilir
+                        if(window.gpSetAdminVisible) window.gpSetAdminVisible(true);
                     } else {
                         window.isAdmin = false;
                         info.innerText = `Kaptan: ${username}`;
@@ -73,9 +75,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                         if(uploadBtn) uploadBtn.style.display = "block";
                         if(navStatTool) navStatTool.style.display = "none";
                         if(navSimTool) navSimTool.style.display = "none";
+                        if(window.gpSetAdminVisible) window.gpSetAdminVisible(false);
                         
                         const activeTool = document.querySelector('.tool-section.active');
-                        if (activeTool && (activeTool.id === 'stat-tool' || activeTool.id === 'sim-tool' || activeTool.id === 'depo-tool')) {
+                        if (activeTool && (activeTool.id === 'stat-tool' || activeTool.id === 'sim-tool' || activeTool.id === 'depo-tool' || activeTool.id.startsWith('gp-'))) {
                             if (window.openTool) window.openTool('item-tool');
                         }
                     }
@@ -95,10 +98,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
                 if(navNoteTool) navNoteTool.style.display = "none";
                 if(navStatTool) navStatTool.style.display = "none";
                 if(navSimTool) navSimTool.style.display = "none";
+                if(window.gpSetAdminVisible) window.gpSetAdminVisible(false);
                 window.updateUIPermissions();
                 
                 const activeTool = document.querySelector('.tool-section.active');
-                if (activeTool && (activeTool.id === 'note-tool' || activeTool.id === 'stat-tool' || activeTool.id === 'sim-tool' || activeTool.id === 'depo-tool')) {
+                if (activeTool && (activeTool.id === 'note-tool' || activeTool.id === 'stat-tool' || activeTool.id === 'sim-tool' || activeTool.id === 'depo-tool' || activeTool.id.startsWith('gp-'))) {
                     if (window.openTool) window.openTool('item-tool');
                 }
             }
@@ -325,8 +329,19 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
         setInterval(() => { const now = Date.now(); if (now - window.lastEditTime > 10 * 60 * 1000) { const afkEl = document.getElementById('afk-reminder'); if (afkEl && afkEl.style.display !== 'block') { afkEl.innerHTML = `⏳ <b>Kaptan Köşkü Uyarısı</b><br><br>10 dakikadır işlem yapılmadı.<br><span style="color:#fbc531; font-size:11px;">Son İşlem: ${window.lastEditText}</span>`; afkEl.style.display = 'block'; } } }, 60000); 
         onValue(ref(database, ".info/connected"), (snap) => { const statusDot = document.getElementById("status-indicator"); const statusText = document.getElementById("status-text"); if (snap.val() === true) { statusDot.classList.add("online"); statusText.innerText = "Firebase'e Bağlı (Canlı)"; statusText.style.color = "#10b981"; } else { statusDot.classList.remove("online"); statusText.innerText = "Çevrimdışı"; statusText.style.color = "#ef4444"; } });
 
-        window.spaceGarbageDB = database; window.firebaseRef = ref; window.firebaseSet = set; window.firebaseOnValue = onValue;
+        // ==========================================
+        // GLOBAL FIREBASE ERİŞİMİ (SpaceGarbage + GamePlanner ortak kullanır)
+        // ==========================================
+        window.spaceGarbageDB = database; window.firebaseRef = ref; window.firebaseSet = set; window.firebaseOnValue = onValue; window.firebaseGet = get;
         window.fileToBase64 = function(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); }); };
+
+        // GamePlanner'ın asset galerisi ve kapak görselleri için Storage erişimi
+        window.spaceGarbageStorage = storage;
+        window.storageRefFn = storageRef;
+        window.uploadBytesFn = uploadBytes;
+        window.getDownloadURLFn = getDownloadURL;
+        window.deleteObjectFn = deleteObject;
+        window.listAllFn = listAll;
 
         // ==========================================
         // STAT SİMÜLATÖRÜ
